@@ -1,4 +1,4 @@
-name: Publish Docker image
+name: Build and push Docker image on code change
 
 on:
   push:
@@ -6,13 +6,13 @@ on:
       - '*' # 监听所有分支上的代码变更
 
 jobs:
-  push_to_registry:
-    name: Push Docker image to Docker Hub
+  build_and_push:
+    name: Build and push Docker image
     runs-on: ubuntu-latest
     permissions:
       packages: write
       contents: read
-      
+
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
@@ -28,6 +28,10 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: docker.io/lupus721/jsoncrack
+          flavor: |
+            latest=true
+            sha=${{ github.sha }}
+            branch=${{ github.ref_name }}
 
       - name: Build and push Docker image
         id: push
@@ -39,10 +43,11 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
+      # 使用 GITHUB_TOKEN 作为身份验证令牌，但请确保 actions/attest-build-provenance 支持此方法
       - name: Generate artifact attestation
-        if: always() # 确保即使构建失败也尝试生成证明
         uses: actions/attest-build-provenance@v1
         with:
           subject-name: docker.io/lupus721/jsoncrack
           subject-digest: ${{ steps.push.outputs.digest }}
-          push-to-registry: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # 如果需要其他配置，请查阅 actions/attest-build-provenance 文档
