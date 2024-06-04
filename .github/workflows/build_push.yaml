@@ -2,8 +2,8 @@ name: Publish Docker image
 
 on:
   push:
-    tags:
-      - 'v*.*.*' # 只匹配形如 v1.0.1 的标签，您可以根据需要自定义正则表达式
+    branches:
+      - '*' # 监听所有分支上的代码变更
 
 jobs:
   push_to_registry:
