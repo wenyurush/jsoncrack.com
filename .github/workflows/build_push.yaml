@@ -14,15 +14,16 @@ jobs:
       contents: read
 
     steps:
-      - name: Check out the repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Log in to Docker Hub
+      - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      # 注意：直接使用环境变量，未进行短SHA处理
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
@@ -31,6 +32,14 @@ jobs:
           push: true
           tags: |
             latest
-            v${{ github.run_number }}
-            ${GITHUB_SHA::short} # 注意：GitHub Actions 不支持直接获取短SHA，您可能需要使用完整的SHA
-            ${GITHUB_REF##*/} # 分支名标签
+            v${{ github.run_number }} # 使用运行编号作为版本号
+            ${{ github.sha }} # 使用完整SHA作为标签
+            ${GITHUB_REF##*/} # 分支名作为标签
+
+      # 如果需要处理短SHA或其他高级标签逻辑，可以在这里添加自定义步骤
+      # 例如，安装jq工具并使用它来提取短SHA
+      # - name: Install jq
+      #   run: sudo apt-get update && sudo apt-get install -y jq
+      # - name: Extract short SHA
+      #   run: echo "::set-output name=SHORT_SHA::$(echo '${{ github.sha }}' | jq -r '.[:7]')"
+      # 然后在tags中引用这个输出变量来使用短SHA
