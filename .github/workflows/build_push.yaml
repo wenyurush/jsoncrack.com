@@ -23,33 +23,14 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v3
-        with:
-          images: docker.io/lupus721/jsoncrack
-          flavor: |
-            latest=true
-          tags: |
-            type=sha,format=short
-            type=raw,enable=true,priority=100
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
-            type=match,regex=^(v\d+\.\d+\.?\d*)$,group=1,priority=200
-            type=match,regex=^v(\d+)$,group=1,priority=190
-            type=branch,enable=true,priority=180
-            type=schedule,enable=true,priority=170,cron=* * * * *
-            type=ref,event=pr,prefix=pr-,enable=true,priority=160
-
       - name: Build and push Docker image
-        id: build-and-push
         uses: docker/build-push-action@v3
         with:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-
-      # 如果需要添加 attest-build-provenance 或其他后续步骤，请在此处添加
+          tags: |
+            latest
+            v${{ github.run_number }}
+            ${GITHUB_SHA::short} # 注意：GitHub Actions 不支持直接获取短SHA，您可能需要使用完整的SHA
+            ${GITHUB_REF##*/} # 分支名标签
