@@ -3,7 +3,7 @@ name: Publish Docker image
 on:
   push:
     tags:
-      - 'v*.*.*' # 只匹配形如 v1.2.3 的标签，您可以根据需要自定义正则表达式
+      - 'v*.*.*' # 只匹配形如 v1.0.1 的标签，您可以根据需要自定义正则表达式
 
 jobs:
   push_to_registry:
