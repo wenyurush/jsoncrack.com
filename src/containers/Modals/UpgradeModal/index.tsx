@@ -12,7 +12,6 @@ import {
   useMantineTheme,
   useMantineColorScheme,
   List,
-  Anchor,
 } from "@mantine/core";
 import { IoMdArrowForward } from "react-icons/io";
 import { MdCheck } from "react-icons/md";
@@ -82,6 +81,7 @@ export const UpgradeModal = ({ opened, onClose }: ModalProps) => {
             py="xs"
             px="sm"
             style={{
+              borderWidth: 2,
               borderColor: getBorderColor("monthly"),
               cursor: "pointer",
             }}
@@ -95,6 +95,7 @@ export const UpgradeModal = ({ opened, onClose }: ModalProps) => {
             radius="md"
             p="sm"
             style={{
+              borderWidth: 2,
               borderColor: getBorderColor("annual"),
               cursor: "pointer",
             }}
@@ -123,12 +124,18 @@ export const UpgradeModal = ({ opened, onClose }: ModalProps) => {
         <List.Item>50% Less Nodes & Compact Graph Visualization</List.Item>
         <List.Item>Compare Data on Graphs</List.Item>
         <List.Item>Edit on Graphs</List.Item>
-        <List.Item>
-          <Anchor c="gray" fz="sm" href="/#preview" target="_blank">
-            ...and more
-          </Anchor>
-        </List.Item>
       </List>
+
+      <Button
+        component="a"
+        href="/#premium"
+        target="_blank"
+        size="compact-sm"
+        variant="subtle"
+        mt="sm"
+      >
+        ...and more, see all features!
+      </Button>
 
       <Divider my="md" />
       <Flex align="center" justify="space-between">
@@ -143,7 +150,7 @@ export const UpgradeModal = ({ opened, onClose }: ModalProps) => {
             /mo (billed {plan === "monthly" ? "monthly" : "annually"})
           </Text>
         </Flex>
-        <Button onClick={handleSelect} color="indigo" rightSection={<IoMdArrowForward />}>
+        <Button onClick={handleSelect} color="green" rightSection={<IoMdArrowForward />}>
           Upgrade
         </Button>
       </Flex>
